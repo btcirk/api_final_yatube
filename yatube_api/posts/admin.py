@@ -1,3 +1,8 @@
 from django.contrib import admin
 
-# Register your models here.
+from .models import Post, Group, Comment
+
+
+admin.site.register(Post)
+admin.site.register(Group)
+admin.site.register(Comment)
