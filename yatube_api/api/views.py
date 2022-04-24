@@ -1,6 +1,8 @@
 from rest_framework import status, viewsets
 from rest_framework.response import Response
 from rest_framework.views import PermissionDenied
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import filters
 
 from posts.models import Post, Group, Comment, Follow
 from .serializers import PostSerializer, GroupSerializer, CommentSerializer, FollowSerializer
@@ -60,6 +62,8 @@ class CommentViewSet(viewsets.ModelViewSet):
 
 class FollowViewSet(viewsets.ModelViewSet):
     serializer_class = FollowSerializer
+    filter_backends = (filters.SearchFilter,)
+    search_fields = ('following__username',)
 
     def get_queryset(self):
         new_queryset = Follow.objects.filter(user=self.request.user)
