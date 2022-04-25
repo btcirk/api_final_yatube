@@ -1,11 +1,12 @@
 from rest_framework import status, viewsets
+from rest_framework import filters
 from rest_framework.response import Response
 from rest_framework.views import PermissionDenied
-from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import filters
+from rest_framework.pagination import LimitOffsetPagination
 
 from posts.models import Post, Group, Comment, Follow
-from .serializers import PostSerializer, GroupSerializer, CommentSerializer, FollowSerializer
+from .serializers import PostSerializer, GroupSerializer
+from .serializers import CommentSerializer, FollowSerializer
 from .permissions import OwnerOrReadOnly, ReadOnly
 
 
@@ -13,6 +14,7 @@ class PostViewSet(viewsets.ModelViewSet):
     queryset = Post.objects.all()
     serializer_class = PostSerializer
     permission_classes = (OwnerOrReadOnly,)
+    pagination_class = LimitOffsetPagination
 
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)

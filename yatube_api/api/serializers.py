@@ -1,6 +1,5 @@
 from rest_framework import serializers
-from rest_framework.relations import SlugRelatedField, PrimaryKeyRelatedField
-from rest_framework.views import PermissionDenied
+from rest_framework.relations import SlugRelatedField
 from rest_framework.validators import UniqueTogetherValidator
 
 
@@ -9,8 +8,6 @@ from posts.models import Post, Group, Comment, Follow, User
 
 class PostSerializer(serializers.ModelSerializer):
     author = SlugRelatedField(slug_field='username', read_only=True)
-    #group = SlugRelatedField(slug_field='slug', queryset=Group.objects.all(), required=False)
-    #group = PrimaryKeyRelatedField(queryset=Group.objects.all())
 
     class Meta:
         fields = ('id', 'author', 'text', 'pub_date', 'image', 'group')
@@ -54,7 +51,6 @@ class FollowSerializer(serializers.ModelSerializer):
                 message=('Повторная подписка невозможна.')
             )
         ]
-
 
     def validate_following(self, value):
         if value == self.context['request'].user:
