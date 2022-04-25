@@ -1,6 +1,6 @@
-from rest_framework import status, viewsets
+from rest_framework import viewsets
 from rest_framework import filters
-from rest_framework.response import Response
+from rest_framework import mixins
 from rest_framework.views import PermissionDenied
 from rest_framework.pagination import LimitOffsetPagination
 
@@ -8,6 +8,12 @@ from posts.models import Post, Group, Comment, Follow
 from .serializers import PostSerializer, GroupSerializer
 from .serializers import CommentSerializer, FollowSerializer
 from .permissions import OwnerOrReadOnly, ReadOnly
+
+
+class CreateListViewSet(mixins.CreateModelMixin,
+                        mixins.ListModelMixin,
+                        viewsets.GenericViewSet):
+    pass
 
 
 class PostViewSet(viewsets.ModelViewSet):
@@ -35,9 +41,6 @@ class GroupViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = GroupSerializer
     permission_classes = (ReadOnly,)
 
-    def perform_create(self, serializer):
-        return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
-
 
 class CommentViewSet(viewsets.ModelViewSet):
     serializer_class = CommentSerializer
@@ -62,7 +65,7 @@ class CommentViewSet(viewsets.ModelViewSet):
         super(CommentViewSet, self).perform_destroy(instance)
 
 
-class FollowViewSet(viewsets.ModelViewSet):
+class FollowViewSet(CreateListViewSet):
     serializer_class = FollowSerializer
     filter_backends = (filters.SearchFilter,)
     search_fields = ('following__username',)

@@ -1,4 +1,6 @@
-from rest_framework import permissions
+from rest_framework import permissions, status
+from rest_framework.permissions import SAFE_METHODS
+from rest_framework.response import Response
 
 
 class OwnerOrReadOnly(permissions.BasePermission):
@@ -12,4 +14,6 @@ class OwnerOrReadOnly(permissions.BasePermission):
 class ReadOnly(permissions.BasePermission):
 
     def has_permission(self, request, view):
-        return True
+        if request.method in SAFE_METHODS:
+            return True
+        return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
